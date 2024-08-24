@@ -45,7 +45,6 @@ describe('mint-nft', () => {
   const mintKeypair = Keypair.generate();
   const mint = mintKeypair.publicKey;
   const userWalletKeypair = Keypair.generate()
-  const userWallet = userWalletKeypair.publicKey
 
   const getMetadata = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> => {
     return anchor.web3.PublicKey.findProgramAddressSync(

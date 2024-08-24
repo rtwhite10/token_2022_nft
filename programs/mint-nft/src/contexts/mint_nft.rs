@@ -35,8 +35,6 @@ pub struct MintNFT<'info> {
         mint::decimals = 0,
         mint::authority = mint_authority,
         mint::freeze_authority = mint_authority,
-        extensions::transfer_hook::authority = mint_authority,
-        extensions::transfer_hook::program_id = Pubkey::from_str(TRANSFER_HOOK_PROGRAM_ID).unwrap(),
     )]
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(
@@ -117,7 +115,7 @@ impl<'info> MintNFT<'info> {
                 data: DataV2 {
                     name: "Mint Test".to_string(),
                     symbol: "YAY".to_string(),
-                    uri: "".to_string(),
+                    uri: "https://gateway.pinata.cloud/ipfs/QmRAuxeMnsjPsbwW8LkKtk6Nh6MoqTvyKwP3zwuwJnB2yP".to_string(),
                     seller_fee_basis_points: 0,
                     creators: Some(creator),
                     collection: Some(Collection {
