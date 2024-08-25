@@ -11,6 +11,8 @@ import {
 } from '@solana/wallet-adapter-react-ui';
 import { Connection, PublicKey, SystemProgram, Transaction, clusterApiUrl } from '@solana/web3.js';
 import CreateCollection from "../Interactions/CreateCollection";
+import TestProgram from "../Interactions/TestProgram/TestProgram";
+import MintNftStandard from "../Interactions/MintNftStandard/MintNftStandard";
  
 // Default styles that can be overridden by your app
 require('@solana/wallet-adapter-react-ui/styles.css');
@@ -50,9 +52,13 @@ export const Wallet = () => {
         <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets} autoConnect>
                 <WalletModalProvider>
+                    <div className="flex flex-col gap-20">
                     <WalletMultiButton />
                     <WalletDisconnectButton />
                     <CreateCollection />
+                    <TestProgram />
+                    <MintNftStandard />
+                    </div>
                 </WalletModalProvider>
             </WalletProvider>
         </ConnectionProvider>

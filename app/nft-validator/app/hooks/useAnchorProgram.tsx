@@ -1,4 +1,8 @@
 import { Connection, clusterApiUrl } from '@solana/web3.js';
+import TestProgramIDL from "../../../../target/idl/test_program.json"
+import {TestProgram} from "../../../../target/types/test_program"
+import MintNftStandardIDL from "../../../../target/idl/mint_nft_standard.json"
+import {MintNftStandard} from "../../../../target/types/mint_nft_standard"
 import IDL from "../../../../target/idl/mint_nft.json"
 import {MintNft} from "../../../../target/types/mint_nft"
 import { useAnchorWallet, useWallet } from '@solana/wallet-adapter-react';
@@ -23,15 +27,25 @@ export const useAnchorProgram = () => {
     if (wallet) {
     
     const provider = new AnchorProvider(connection, wallet, AnchorProvider.defaultOptions());
-    const program = new Program<MintNft>(
+    const mintNft = new Program<MintNft>(
       IDL as MintNft,
       provider
-  );
+    );
+
+    const testProgram = new Program<TestProgram>(
+      TestProgramIDL as TestProgram,
+      provider
+    )
+
+    const mintNftStandard = new Program<MintNftStandard>(
+      MintNftStandardIDL as MintNftStandard,
+      provider
+    )
 
 
   
 
-    return { program, provider };
+    return { programs: {mintNft, testProgram, mintNftStandard}, provider };
   }
   return {}
 };

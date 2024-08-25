@@ -5,7 +5,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Keypair, SystemProgram } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
 
-export default function CreateCollection() {
+export default function MintNftStandard() {
     const { programs, provider } = useAnchorProgram();
     const wallet = useWallet();
     const [txSignature, setTxSignature] = useState<string | null>(null);
@@ -34,10 +34,10 @@ export default function CreateCollection() {
         const collectionMint = collectionKeypair.publicKey;
 3
         try {
-          if(!programs?.mintNft) {
+          if(!programs?.mintNftStandard) {
             throw new Error("Program is undefined")
           }
-            const tx = await programs.mintNft.methods
+            const tx = await programs.mintNftStandard.methods
                 .createCollection()
                 .accountsPartial({
                     user: wallet.publicKey,
@@ -66,7 +66,7 @@ export default function CreateCollection() {
             <h1>Create NFT Collection</h1>
             {wallet.connected ? (
                 <>
-                    <button onClick={handleCreateCollection}>Create Collection</button>
+                    <button onClick={handleCreateCollection}>Create Collection Standard</button>
                     {txSignature && <p>Transaction Signature: {txSignature}</p>}
                 </>
             ) : (

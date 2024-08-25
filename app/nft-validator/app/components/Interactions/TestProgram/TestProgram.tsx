@@ -5,7 +5,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Keypair, SystemProgram } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
 
-export default function CreateCollection() {
+export default function TestProgram() {
     const { programs, provider } = useAnchorProgram();
     const wallet = useWallet();
     const [txSignature, setTxSignature] = useState<string | null>(null);
@@ -25,33 +25,13 @@ export default function CreateCollection() {
             return;
         }
 
-        // Create necessary accounts
-        const collectionKeypair = Keypair.generate();
-        const mintAuthority = wallet.publicKey;
-        const metadata = Keypair.generate().publicKey;
-        const masterEdition = Keypair.generate().publicKey;
-        const destination = Keypair.generate().publicKey;
-        const collectionMint = collectionKeypair.publicKey;
-3
+      
         try {
-          if(!programs?.mintNft) {
+          if(!programs?.testProgram) {
             throw new Error("Program is undefined")
           }
-            const tx = await programs.mintNft.methods
-                .createCollection()
-                .accountsPartial({
-                    user: wallet.publicKey,
-                    mint: collectionMint,
-                    mintAuthority,
-                    metadata,
-                    masterEdition,
-                    destination,
-                    systemProgram: SystemProgram.programId,
-                    tokenProgram: TOKEN_2022_PROGRAM_ID,
-                    associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-                    tokenMetadataProgram: MPL_TOKEN_METADATA_PROGRAM_ID,
-                })
-                .signers([collectionKeypair])
+            const tx = await programs.testProgram.methods
+                .initialize()
                 .rpc();
 
             console.log("Transaction signature:", tx);
@@ -63,10 +43,10 @@ export default function CreateCollection() {
 
     return (
         <div>
-            <h1>Create NFT Collection</h1>
+            <h1>Test program</h1>
             {wallet.connected ? (
                 <>
-                    <button onClick={handleCreateCollection}>Create Collection</button>
+                    <button onClick={handleCreateCollection}>Test Program init</button>
                     {txSignature && <p>Transaction Signature: {txSignature}</p>}
                 </>
             ) : (

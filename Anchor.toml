@@ -5,7 +5,9 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
+mint-nft-standard = "G3DnvWBgoehH7bJMGWaVHUphGwK8Q2cXNChvsK6evF5H"
 mint_nft = "4SMcaPMWGL5qj1nwxbQY7VyQbTE561x9Um4aSod4B923"
+test-program = "EA9mJkzBu8cYSGFyMRwBVYfgS3MUn2SxUjWn1E1UBVTx"
 
 [programs.localnet]
 mint-nft = "4SMcaPMWGL5qj1nwxbQY7VyQbTE561x9Um4aSod4B923"
@@ -15,14 +17,22 @@ transfer-hook = "fHvRUSXf2mpFMpcaZJifJuCHWQcrsDSC91cdqx8echQ"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "Devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 
+[test]
+startup_wait = 5000
+shutdown_wait = 2000
+upgradeable = false
+
 [test.validator]
+bind_address = "0.0.0.0"
 url = "https://api.mainnet-beta.solana.com"
+ledger = ".anchor/test-ledger"
+rpc_port = 8899
 
 [[test.validator.clone]]
 address = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
