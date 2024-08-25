@@ -2,8 +2,13 @@ import useAnchorProgram from '@/app/hooks/useAnchorProgram';
 import { MPL_TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Keypair, SystemProgram } from '@solana/web3.js';
+import { Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
+
+
+console.log(MPL_TOKEN_METADATA_PROGRAM_ID)
+console.log(ASSOCIATED_TOKEN_PROGRAM_ID)
+console.log(TOKEN_2022_PROGRAM_ID)
 
 export default function MintNftStandard() {
     const { programs, provider } = useAnchorProgram();
@@ -49,7 +54,7 @@ export default function MintNftStandard() {
                     systemProgram: SystemProgram.programId,
                     tokenProgram: TOKEN_2022_PROGRAM_ID,
                     associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-                    tokenMetadataProgram: MPL_TOKEN_METADATA_PROGRAM_ID,
+                    tokenMetadataProgram: new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID),
                 })
                 .signers([collectionKeypair])
                 .rpc();
