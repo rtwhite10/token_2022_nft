@@ -1,3 +1,5 @@
+'use client'
+
 import useAnchorProgram from '@/app/hooks/useAnchorProgram';
 import { MPL_TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
@@ -9,7 +11,7 @@ export default function TestProgram() {
     const { programs, provider } = useAnchorProgram();
     const wallet = useWallet();
     const [txSignature, setTxSignature] = useState<string | null>(null);
-
+    console.log(programs?.testProgram.programId.toBase58(), " test programId")
     useEffect(() => {
         if (wallet && wallet.publicKey) {
             console.log("Wallet Public Key:", wallet.publicKey.toBase58());

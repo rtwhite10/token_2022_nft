@@ -16,8 +16,8 @@ import MintNftStandard from "../Interactions/MintNftStandard/MintNftStandard";
  
 // Default styles that can be overridden by your app
 require('@solana/wallet-adapter-react-ui/styles.css');
- 
-export const Wallet = () => {
+
+const Web3WalletProvider = ({children}: {children: React.ReactNode}) => {
     // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
     const network = WalletAdapterNetwork.Devnet;
  
@@ -55,14 +55,14 @@ export const Wallet = () => {
                     <div className="flex flex-col gap-20">
                     <WalletMultiButton />
                     <WalletDisconnectButton />
-                    <CreateCollection />
-                    <TestProgram />
-                    <MintNftStandard />
+                    {children}
                     </div>
                 </WalletModalProvider>
             </WalletProvider>
         </ConnectionProvider>
     );
 };
+
+export default Web3WalletProvider;
 
 

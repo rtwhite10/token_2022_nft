@@ -23,7 +23,7 @@ use spl_transfer_hook_interface::instruction::ExecuteInstruction;
 // transfer-hook program that charges a SOL fee on token transfer
 // use a delegate and wrapped SOL because signers from initial transfer are not accessible
 
-declare_id!("fHvRUSXf2mpFMpcaZJifJuCHWQcrsDSC91cdqx8echQ");
+declare_id!("5LTuvHLAsQkQnWbLvHfjTdPNWHSuqAyG6h9aA1KY9E7H");
 
 #[error_code]
 pub enum TransferError {

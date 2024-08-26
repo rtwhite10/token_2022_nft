@@ -1,8 +1,11 @@
+'use client'
+
 import useAnchorProgram from '@/app/hooks/useAnchorProgram';
+import { program } from '@coral-xyz/anchor/dist/cjs/native/system';
 import { MPL_TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { Keypair, SystemProgram } from '@solana/web3.js';
+import { Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
 
 export default function CreateCollection() {
@@ -32,7 +35,7 @@ export default function CreateCollection() {
         const masterEdition = Keypair.generate().publicKey;
         const destination = Keypair.generate().publicKey;
         const collectionMint = collectionKeypair.publicKey;
-3
+
         try {
           if(!programs?.mintNft) {
             throw new Error("Program is undefined")

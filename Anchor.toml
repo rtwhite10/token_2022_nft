@@ -5,12 +5,15 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-mint-nft-standard = "G3DnvWBgoehH7bJMGWaVHUphGwK8Q2cXNChvsK6evF5H"
-mint_nft = "4SMcaPMWGL5qj1nwxbQY7VyQbTE561x9Um4aSod4B923"
-test-program = "EA9mJkzBu8cYSGFyMRwBVYfgS3MUn2SxUjWn1E1UBVTx"
+mint-nft-standard = "dC9AHAGp4pRXgLDM3Y9mXfbcTFJhvcJS7J4fXC4nEzy"
+mint_nft = "FuXM8HFaNujkovGhJVPYJxbRG6DaMjdYEV9VaC8N4K8i"
+test-program = "73mDoPfiVb7MJtXchdzteB1APVzzzMHKYdrSU7R93B5S"
+transfer-hook = "fHvRUSXf2mpFMpcaZJifJuCHWQcrsDSC91cdqx8echQ"
 
 [programs.localnet]
-mint-nft = "4SMcaPMWGL5qj1nwxbQY7VyQbTE561x9Um4aSod4B923"
+mint-nft-standard = "dC9AHAGp4pRXgLDM3Y9mXfbcTFJhvcJS7J4fXC4nEzy"
+mint_nft = "FuXM8HFaNujkovGhJVPYJxbRG6DaMjdYEV9VaC8N4K8i"
+test-program = "73mDoPfiVb7MJtXchdzteB1APVzzzMHKYdrSU7R93B5S"
 transfer-hook = "fHvRUSXf2mpFMpcaZJifJuCHWQcrsDSC91cdqx8echQ"
 
 [registry]
@@ -18,7 +21,7 @@ url = "https://api.apr.dev"
 
 [provider]
 cluster = "Devnet"
-wallet = "~/.config/solana/id.json"
+wallet = "~/Documents/code/program-examples/tokens/nft-operations/anchor/solflare-wallet-keypair.json"
 
 [scripts]
 test = "pnpm ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

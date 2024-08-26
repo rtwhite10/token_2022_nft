@@ -1,19 +1,31 @@
+'use client'
+
 import useAnchorProgram from '@/app/hooks/useAnchorProgram';
-import { MPL_TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID } from '@solana/spl-token';
+import { mplCore } from '@metaplex-foundation/mpl-core';
+import { findMasterEditionPda, findMetadataPda, MPL_TOKEN_METADATA_PROGRAM_ID } from '@metaplex-foundation/mpl-token-metadata';
+import { createUmi, publicKey } from '@metaplex-foundation/umi';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Keypair, PublicKey, SystemProgram } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
+import * as anchor from '@coral-xyz/anchor';
 
-
-console.log(MPL_TOKEN_METADATA_PROGRAM_ID)
-console.log(ASSOCIATED_TOKEN_PROGRAM_ID)
-console.log(TOKEN_2022_PROGRAM_ID)
-
-export default function MintNftStandard() {
+export default function MintNftStandard({mintSecreteKey, collectionSecreteKey, masterEditionSecreteKey, metadataSecreteKey, payerSecreteKey}: {mintSecreteKey: Uint8Array; payerSecreteKey: Uint8Array; metadataSecreteKey: Uint8Array; masterEditionSecreteKey: Uint8Array; collectionSecreteKey: Uint8Array;}) {
     const { programs, provider } = useAnchorProgram();
     const wallet = useWallet();
     const [txSignature, setTxSignature] = useState<string | null>(null);
+    const payerKeypairFromSecrete= Keypair.fromSecretKey(Uint8Array.from(payerSecreteKey));
+    const masterEditionKeypairFromSecrete = Keypair.fromSecretKey(Uint8Array.from(masterEditionSecreteKey));
+    const metadataKeypairFromSecrete = Keypair.fromSecretKey(Uint8Array.from(metadataSecreteKey));
+    const collectionKeypairFromSecrete = Keypair.fromSecretKey(Uint8Array.from(collectionSecreteKey));
+    const mintKeypairFromSecrete = Keypair.fromSecretKey(Uint8Array.from(mintSecreteKey));
+
+    const context = {
+        eddsa: collectionKeypairFromSecrete, // Assuming the wallet contains eddsa signing capabilities
+        programs: {
+            metadata: MPL_TOKEN_METADATA_PROGRAM_ID,
+        }
+    };
 
     useEffect(() => {
         if (wallet && wallet.publicKey) {
@@ -25,38 +37,50 @@ export default function MintNftStandard() {
     }, [wallet,provider]);
 
     const handleCreateCollection = async () => {
-        if (!wallet.publicKey) {
+        if (!payerKeypairFromSecrete) {
             console.error("Wallet not connected");
             return;
         }
 
-        // Create necessary accounts
-        const collectionKeypair = Keypair.generate();
-        const mintAuthority = wallet.publicKey;
-        const metadata = Keypair.generate().publicKey;
-        const masterEdition = Keypair.generate().publicKey;
-        const destination = Keypair.generate().publicKey;
-        const collectionMint = collectionKeypair.publicKey;
-3
         try {
           if(!programs?.mintNftStandard) {
             throw new Error("Program is undefined")
           }
+            const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID);
+        
+            const getMetadata = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> => {
+                return anchor.web3.PublicKey.findProgramAddressSync(
+                [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+                TOKEN_METADATA_PROGRAM_ID,
+                )[0];
+            };
+
+            const getMasterEdition = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> => {
+                return anchor.web3.PublicKey.findProgramAddressSync(
+                [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer(), Buffer.from('edition')],
+                TOKEN_METADATA_PROGRAM_ID,
+                )[0];
+            };
+
+            const metadata = await getMetadata(collectionKeypairFromSecrete.publicKey);
+            const masterEdition = await getMasterEdition(collectionKeypairFromSecrete.publicKey);
+            const destination = getAssociatedTokenAddressSync(collectionKeypairFromSecrete.publicKey, payerKeypairFromSecrete.publicKey);
+            const mintAuthority = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from('authority')], programs.mintNftStandard.programId)[0];
             const tx = await programs.mintNftStandard.methods
                 .createCollection()
                 .accountsPartial({
-                    user: wallet.publicKey,
-                    mint: collectionMint,
+                    user: payerKeypairFromSecrete.publicKey,
+                    mint: collectionKeypairFromSecrete.publicKey,
                     mintAuthority,
                     metadata,
                     masterEdition,
                     destination,
                     systemProgram: SystemProgram.programId,
-                    tokenProgram: TOKEN_2022_PROGRAM_ID,
+                    tokenProgram: TOKEN_PROGRAM_ID,
                     associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-                    tokenMetadataProgram: new PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID),
+                    tokenMetadataProgram: MPL_TOKEN_METADATA_PROGRAM_ID,
                 })
-                .signers([collectionKeypair])
+                .signers([collectionKeypairFromSecrete, payerKeypairFromSecrete])
                 .rpc();
 
             console.log("Transaction signature:", tx);
