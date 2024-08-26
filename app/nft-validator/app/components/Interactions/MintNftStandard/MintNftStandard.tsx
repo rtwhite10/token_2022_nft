@@ -46,6 +46,8 @@ export default function MintNftStandard({mintSecreteKey, collectionSecreteKey, m
           if(!programs?.mintNftStandard) {
             throw new Error("Program is undefined")
           }
+            const collectionKeypair = Keypair.generate();
+            const collectionMint = collectionKeypair.publicKey;
             const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID);
         
             const getMetadata = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> => {
@@ -62,15 +64,15 @@ export default function MintNftStandard({mintSecreteKey, collectionSecreteKey, m
                 )[0];
             };
 
-            const metadata = await getMetadata(collectionKeypairFromSecrete.publicKey);
-            const masterEdition = await getMasterEdition(collectionKeypairFromSecrete.publicKey);
-            const destination = getAssociatedTokenAddressSync(collectionKeypairFromSecrete.publicKey, payerKeypairFromSecrete.publicKey);
+            const metadata = await getMetadata(collectionMint);
+            const masterEdition = await getMasterEdition(collectionMint);
+            const destination = getAssociatedTokenAddressSync(collectionMint, payerKeypairFromSecrete.publicKey);
             const mintAuthority = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from('authority')], programs.mintNftStandard.programId)[0];
             const tx = await programs.mintNftStandard.methods
                 .createCollection()
                 .accountsPartial({
                     user: payerKeypairFromSecrete.publicKey,
-                    mint: collectionKeypairFromSecrete.publicKey,
+                    mint: collectionMint,
                     mintAuthority,
                     metadata,
                     masterEdition,
@@ -80,7 +82,7 @@ export default function MintNftStandard({mintSecreteKey, collectionSecreteKey, m
                     associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
                     tokenMetadataProgram: MPL_TOKEN_METADATA_PROGRAM_ID,
                 })
-                .signers([collectionKeypairFromSecrete, payerKeypairFromSecrete])
+                .signers([collectionKeypair, payerKeypairFromSecrete])
                 .rpc();
 
             console.log("Transaction signature:", tx);
@@ -90,12 +92,78 @@ export default function MintNftStandard({mintSecreteKey, collectionSecreteKey, m
         }
     };
 
+    const handleCreateNft = async () => {
+        if (!payerKeypairFromSecrete) {
+            console.error("Wallet not connected");
+            return;
+        }
+
+        try {
+        const mintKeypair = Keypair.generate();
+        const mint = mintKeypair.publicKey;
+          if(!programs?.mintNftStandard) {
+            throw new Error("Program is undefined")
+          }
+            const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(MPL_TOKEN_METADATA_PROGRAM_ID);
+        
+            const getMetadata = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> => {
+                return anchor.web3.PublicKey.findProgramAddressSync(
+                [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer()],
+                TOKEN_METADATA_PROGRAM_ID,
+                )[0];
+            };
+
+            const getMasterEdition = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> => {
+                return anchor.web3.PublicKey.findProgramAddressSync(
+                [Buffer.from('metadata'), TOKEN_METADATA_PROGRAM_ID.toBuffer(), mint.toBuffer(), Buffer.from('edition')],
+                TOKEN_METADATA_PROGRAM_ID,
+                )[0];
+            };
+            
+            const metadata = await getMetadata(mint);
+            const masterEdition = await getMasterEdition(mint);
+            const destination = getAssociatedTokenAddressSync(mint, payerKeypairFromSecrete.publicKey);
+            const mintAuthority = anchor.web3.PublicKey.findProgramAddressSync([Buffer.from('authority')], programs.mintNftStandard.programId)[0];
+            const tx = await programs.mintNftStandard.methods
+            .mintNft()
+            .accountsPartial({
+                owner: payerKeypairFromSecrete.publicKey,
+                destination,
+                metadata,
+                masterEdition,
+                mint,
+                mintAuthority,
+                collectionMint: collectionKeypairFromSecrete.publicKey,
+                systemProgram: SystemProgram.programId,
+                tokenProgram: TOKEN_PROGRAM_ID,
+                associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+                tokenMetadataProgram: MPL_TOKEN_METADATA_PROGRAM_ID,
+                })
+                .signers([mintKeypair])
+                .rpc();
+
+            console.log("Transaction signature:", tx);
+            setTxSignature(tx);
+        } catch (error) {
+            console.error("Transaction failed:", error);
+        }
+    }
+
     return (
         <div>
             <h1>Create NFT Collection</h1>
             {wallet.connected ? (
                 <>
                     <button onClick={handleCreateCollection}>Create Collection Standard</button>
+                    {txSignature && <p>Transaction Signature: {txSignature}</p>}
+                </>
+            ) : (
+                <p>Please connect your wallet to create a collection.</p>
+            )}
+            <h1>Create NFT</h1>
+            {wallet.connected ? (
+                <>
+                    <button onClick={handleCreateNft}>Create NFT</button>
                     {txSignature && <p>Transaction Signature: {txSignature}</p>}
                 </>
             ) : (

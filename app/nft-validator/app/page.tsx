@@ -11,8 +11,7 @@ export default function Home() {
   return (
     <main>
       <Web3WalletProvider>
-        <CreateMintAccount mintSecreteKey={mintKeypair.secretKey} payer={payer.secretKey}/>
-        <CreateCollection />
+        <CreateCollection mintSecreteKey={mintKeypair.secretKey} payerSecreteKey={payer.secretKey} metadataSecreteKey={metadataKeypair.secretKey} masterEditionSecreteKey={masterEditionKeypair.secretKey} collectionSecreteKey={collectionKeypair.secretKey} />
         <TestProgram />
         <MintNftStandard mintSecreteKey={mintKeypair.secretKey} payerSecreteKey={payer.secretKey} metadataSecreteKey={metadataKeypair.secretKey} masterEditionSecreteKey={masterEditionKeypair.secretKey} collectionSecreteKey={collectionKeypair.secretKey}/>
       </Web3WalletProvider>
