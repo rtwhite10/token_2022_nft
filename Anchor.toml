@@ -7,6 +7,7 @@ skip-lint = false
 [programs.devnet]
 mint-nft-standard = "dC9AHAGp4pRXgLDM3Y9mXfbcTFJhvcJS7J4fXC4nEzy"
 mint_nft = "FuXM8HFaNujkovGhJVPYJxbRG6DaMjdYEV9VaC8N4K8i"
+nft-2022 = "CfWK53q7cVf3vNj6K6BfqmnUVKo1uDGFXujR9fKV7dd6"
 test-program = "73mDoPfiVb7MJtXchdzteB1APVzzzMHKYdrSU7R93B5S"
 transfer-hook = "fHvRUSXf2mpFMpcaZJifJuCHWQcrsDSC91cdqx8echQ"
 
@@ -20,7 +21,7 @@ transfer-hook = "fHvRUSXf2mpFMpcaZJifJuCHWQcrsDSC91cdqx8echQ"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Devnet"
+cluster = "localnet"
 wallet = "~/Documents/code/program-examples/tokens/nft-operations/anchor/solflare-wallet-keypair.json"
 
 [scripts]
